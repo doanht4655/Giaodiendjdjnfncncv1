@@ -1,2 +1,3 @@
-requests>=2.25.1
-colorama>=0.4.4
+# Dependencies cho Tool Manager
+requests>=2.25.0
+colorama>=0.4.0

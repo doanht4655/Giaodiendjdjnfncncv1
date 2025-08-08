@@ -4,12 +4,12 @@
 
 ## ✨ Tính Năng
 
-- 🎯 **8 Tools chuyên nghiệp**: Golike TikTok, Thread, Facebook, Proxy, Spam...
+- 🎯 **7 Tools chuyên nghiệp**: Golike TikTok, Thread, Facebook, Proxy, Spam...
 - 🔒 **Bảo mật cao**: Auto-validate, syntax repair, safe execution
-- 🚀 **Auto-update**: Kiểm tra và cập nhật tools tự động
 - 🎨 **Giao diện đẹp**: ASCII art, màu sắc, hiệu ứng loading
 - 📊 **Logging system**: Theo dõi hoạt động và lỗi chi tiết
 - 🛠️ **Auto-fix**: Tự động sửa lỗi syntax phổ biến
+- ⚡ **Setup tự động**: Script cài đặt và chạy một lệnh
 
 ## 🚀 Cài Đặt & Chạy
 
@@ -17,7 +17,39 @@
 - Python 3.6+
 - Internet connection
 
-### Cài Đặt
+### 🔧 Cài Đặt Tự Động (Khuyến nghị)
+
+```bash
+# Tải về và setup tự động
+git clone https://github.com/doanht4655/Giaodiendjdjnfncncv1.git
+cd Giaodiendjdjnfncncv1
+python3 setup.py
+```
+
+### 🏃‍♂️ Chạy Nhanh
+
+**Linux/Mac:**
+```bash
+# Cách 1: Script shell
+./run.sh
+
+# Cách 2: Makefile
+make run
+
+# Cách 3: Trực tiếp
+python3 main_Version2.py
+```
+
+**Windows:**
+```cmd
+# Cách 1: Batch script
+run.bat
+
+# Cách 2: Trực tiếp
+python main_Version2.py
+```
+
+### 📦 Cài Đặt Thủ Công
 ```bash
 git clone https://github.com/doanht4655/Giaodiendjdjnfncncv1.git
 cd Giaodiendjdjnfncncv1

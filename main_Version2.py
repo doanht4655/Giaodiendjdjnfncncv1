@@ -6,7 +6,6 @@ import random
 import json
 import tempfile
 import hashlib
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Optional, Any
 import subprocess
 
@@ -34,10 +33,10 @@ BASE_URL = "https://raw.githubusercontent.com/doanht4655/Xjcjfjfj/refs/heads/mai
 TOOLS = {
     "1": {"name": "Tool Golike TikTok", "file": "vip.py"},
     "2": {"name": "Tool Thread", "file": "thera.py"},
-    "5": {"name": "Tool Đăng ký Facebook", "file": "regfb.py"},
-    "6": {"name": "Tool Quản lý Proxy", "file": "proxy.py"},
-    "7": {"name": "Tool Kiểm tra Proxy", "file": "checkproxy.py"},
-    "8": {"name": "Tool Spam", "file": "Spam.py"}
+    "4": {"name": "Tool Đăng ký Facebook", "file": "regfb.py"},
+    "5": {"name": "Tool Quản lý Proxy", "file": "proxy.py"},
+    "6": {"name": "Tool Kiểm tra Proxy", "file": "checkproxy.py"},
+    "7": {"name": "Tool Spam", "file": "Spam.py"}
 }
 
 # ===== Hàm clear màn hình =====
@@ -110,12 +109,11 @@ def banner():
 
 {trang}      [{xanhnhat}1{trang}] {xanh_la}Chạy Tool Golike TikTok {vang}(vip.py)
 {trang}      [{xanhnhat}2{trang}] {xanh_la}Chạy Tool Thread {vang}(thera.py)
-{trang}      [{xanhnhat}3{trang}] {xanh_la}Kiểm tra cập nhật
-{trang}      [{xanhnhat}4{trang}] {xanh_la}Thông tin tác giả
-{trang}      [{xanhnhat}5{trang}] {xanh_la}Đăng ký Facebook {vang}(regfb.py)
-{trang}      [{xanhnhat}6{trang}] {xanh_la}Quản lý Proxy {vang}(proxy.py)
-{trang}      [{xanhnhat}7{trang}] {xanh_la}Kiểm tra Proxy {vang}(checkproxy.py)
-{trang}      [{xanhnhat}8{trang}] {xanh_la}Công cụ Spam {vang}(Spam.py)
+{trang}      [{xanhnhat}3{trang}] {xanh_la}Thông tin tác giả
+{trang}      [{xanhnhat}4{trang}] {xanh_la}Đăng ký Facebook {vang}(regfb.py)
+{trang}      [{xanhnhat}5{trang}] {xanh_la}Quản lý Proxy {vang}(proxy.py)
+{trang}      [{xanhnhat}6{trang}] {xanh_la}Kiểm tra Proxy {vang}(checkproxy.py)
+{trang}      [{xanhnhat}7{trang}] {xanh_la}Công cụ Spam {vang}(Spam.py)
 {trang}      [{xanhnhat}0{trang}] {do}Thoát chương trình
         """
         print_slow(logo, 0.001)
@@ -124,8 +122,7 @@ def banner():
         print(f"{xanh_la}=== MENU CÔNG CỤ TRẦN ĐỨC DOANH ===")
         for key, value in TOOLS.items():
             print(f"{trang}[{xanhnhat}{key}{trang}] {xanh_la}{value['name']} {vang}({value['file']})")
-        print(f"{trang}[{xanhnhat}3{trang}] {xanh_la}Kiểm tra cập nhật")
-        print(f"{trang}[{xanhnhat}4{trang}] {xanh_la}Thông tin tác giả")
+        print(f"{trang}[{xanhnhat}3{trang}] {xanh_la}Thông tin tác giả")
         print(f"{trang}[{xanhnhat}0{trang}] {do}Thoát chương trình")
 
 # ===== Tạo thư mục logs nếu chưa tồn tại =====
@@ -383,101 +380,7 @@ def run_from_github(file_name: str) -> bool:
             except Exception:
                 pass
 
-# ===== Kiểm tra cập nhật cải tiến =====
-def check_update() -> None:
-    """Kiểm tra cập nhật với xử lý song song và báo cáo chi tiết."""
-    print(f"{xanh_la}Đang kiểm tra cập nhật...")
-    loading_animation(2, "Kiểm tra cập nhật")
-    
-    results = {}
-    errors = []
-    
-    def check_file(file_name: str) -> tuple:
-        """Kiểm tra một file cụ thể."""
-        try:
-            response = requests.head(
-                BASE_URL + file_name, 
-                timeout=10,
-                headers={'User-Agent': 'Tool-Manager/2.0'}
-            )
-            response.raise_for_status()
-            return file_name, {
-                'status': 'success',
-                'last_modified': response.headers.get('last-modified', 'Không có thông tin'),
-                'size': response.headers.get('content-length', 'Không rõ'),
-                'etag': response.headers.get('etag', 'Không có')
-            }
-        except Exception as e:
-            return file_name, {'status': 'error', 'error': str(e)}
-    
-    try:
-        file_list = [tool["file"] for tool in TOOLS.values()]
-        
-        # Sử dụng ThreadPoolExecutor với context manager để đảm bảo cleanup
-        with ThreadPoolExecutor(max_workers=min(6, len(file_list))) as executor:
-            # Submit tất cả tasks
-            future_to_file = {
-                executor.submit(check_file, file_name): file_name 
-                for file_name in file_list
-            }
-            
-            # Xử lý kết quả khi hoàn thành
-            for future in as_completed(future_to_file, timeout=30):
-                file_name = future_to_file[future]
-                try:
-                    file_name, result = future.result()
-                    if result['status'] == 'error':
-                        errors.append(f"{file_name}: {result['error']}")
-                    else:
-                        results[file_name] = result
-                except Exception as e:
-                    errors.append(f"{file_name}: Lỗi xử lý future - {str(e)}")
-        
-        # Hiển thị kết quả
-        print(f"{xanh_la}Kiểm tra hoàn tất!")
-        print(f"{vang}╔═══════════════════════════════════════════════════════════╗")
-        print(f"{vang}║ {xanh_la}Thông tin phiên bản và trạng thái:                      {vang}║")
-        print(f"{vang}╠═══════════════════════════════════════════════════════════╣")
-        
-        for tool in TOOLS.values():
-            file_name = tool["file"]
-            tool_name = tool["name"]
-            
-            if file_name in results:
-                info = results[file_name]
-                status = f"{xanh_la}✓ Khả dụng"
-                last_modified = info['last_modified']
-                size = info.get('size', 'Không rõ')
-                if size != 'Không rõ':
-                    try:
-                        size = f"{int(size)/1024:.1f}KB"
-                    except:
-                        size = "Không rõ"
-            else:
-                status = f"{do}✗ Lỗi"
-                last_modified = "Không thể kiểm tra"
-                size = "Không rõ"
-            
-            print(f"{vang}║ {xanhnhat}{tool_name}: {status} - {trang}{last_modified} ({size}) {vang}║")
-        
-        print(f"{vang}╚═══════════════════════════════════════════════════════════╝")
-        
-        # Hiển thị lỗi nếu có
-        if errors:
-            print(f"\n{do}Một số lỗi xảy ra trong quá trình kiểm tra:")
-            for error in errors[:5]:  # Chỉ hiển thị 5 lỗi đầu tiên
-                print(f"{do}- {error}")
-            if len(errors) > 5:
-                print(f"{do}... và {len(errors) - 5} lỗi khác")
-        else:
-            print(f"\n{xanh_la}Tất cả các tool đều có thể truy cập được!")
-            
-    except Exception as e:
-        error_msg = f"Lỗi kiểm tra cập nhật: {str(e)}"
-        print(f"{do}{error_msg}")
-        log_error(error_msg)
-    
-    input(f"\n{vang}Nhấn Enter để quay lại menu...")
+
 
 # ===== Thông tin tác giả =====
 def show_author_info():
@@ -547,9 +450,7 @@ def load_config() -> Dict[str, Any]:
     
     # Cấu hình mặc định
     default_config = {
-        "auto_check_update": False,
         "last_used_tool": None,
-        "last_check_update": None,
         "theme": "default",
         "language": "vi"
     }
@@ -639,19 +540,6 @@ def main() -> None:
     # Tải cấu hình
     config = load_config()
     
-    # Tự động kiểm tra cập nhật nếu được bật
-    if config.get("auto_check_update", False):
-        current_time = time.time()
-        last_check = config.get("last_check_update", 0)
-        
-        # Kiểm tra cập nhật mỗi 24 giờ
-        if current_time - last_check > 86400:  # 24 giờ = 86400 giây
-            if check_internet_connection():
-                print(f"{xanh_la}Đang tự động kiểm tra cập nhật...")
-                check_update()
-                config["last_check_update"] = current_time
-                save_config(config)
-    
     # Biến đếm lỗi liên tiếp
     consecutive_errors = 0
     max_consecutive_errors = 5
@@ -705,11 +593,6 @@ def main() -> None:
                 input(f"{vang}Nhấn Enter để quay lại menu...")
 
             elif choice == "3":
-                check_update()
-                config["last_check_update"] = time.time()
-                save_config(config)
-
-            elif choice == "4":
                 show_author_info()
 
             elif choice == "0":
@@ -719,8 +602,8 @@ def main() -> None:
                 sys.exit(0)
 
             else:
-                print(f"{do}Lựa chọn '{choice}' không hợp lệ! Vui lòng chọn từ 0-8.")
-                print(f"{xanh_la}Các lựa chọn hợp lệ: {', '.join(list(TOOLS.keys()) + ['0', '3', '4'])}")
+                print(f"{do}Lựa chọn '{choice}' không hợp lệ! Vui lòng chọn từ 0-7.")
+                print(f"{xanh_la}Các lựa chọn hợp lệ: {', '.join(list(TOOLS.keys()) + ['0', '3'])}")
                 time.sleep(2)
                 
         except KeyboardInterrupt:
